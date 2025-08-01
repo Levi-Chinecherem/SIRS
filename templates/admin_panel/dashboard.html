@@ -1,0 +1,81 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
+    <p class="text-xl text-gray-400">System analytics and performance monitoring</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="metallic-card rounded-xl p-6 card-hover">
+        <div class="flex items-center">
+            <div class="stat-icon p-3 rounded-lg">
+                <i data-lucide="users" class="h-8 w-8 text-blue-600"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Active Users</p>
+                <p class="text-3xl font-bold text-gray-900">{{ active_users }}</p>
+                <p class="text-xs text-green-600">↑ 8% this month</p>
+            </div>
+        </div>
+    </div>
+    <div class="metallic-card rounded-xl p-6 card-hover">
+        <div class="flex items-center">
+            <div class="stat-icon p-3 rounded-lg">
+                <i data-lucide="file" class="h-8 w-8 text-green-600"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Documents Stored</p>
+                <p class="text-3xl font-bold text-gray-900">{{ total_documents }}</p>
+                <p class="text-xs text-green-600">↑ 12% this month</p>
+            </div>
+        </div>
+    </div>
+    <div class="metallic-card rounded-xl p-6 card-hover">
+        <div class="flex items-center">
+            <div class="stat-icon p-3 rounded-lg">
+                <i data-lucide="search" class="h-8 w-8 text-purple-600"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Daily Searches</p>
+                <p class="text-3xl font-bold text-gray-900">{{ recent_searches }}</p>
+                <p class="text-xs text-green-600">↑ 5% from yesterday</p>
+            </div>
+        </div>
+    </div>
+    <div class="metallic-card rounded-xl p-6 card-hover">
+        <div class="flex items-center">
+            <div class="stat-icon p-3 rounded-lg">
+                <i data-lucide="shield" class="h-8 w-8 text-red-600"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Security Events</p>
+                <p class="text-3xl font-bold text-gray-900">{{ security_events }}</p>
+                <p class="text-xs text-green-600">↓ 40% this week</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="metallic-card rounded-xl p-6">
+    <h3 class="text-lg font-bold text-gray-900 mb-4">System Events</h3>
+    <div class="space-y-4">
+        {% for log in recent_logs %}
+            <div class="flex items-start space-x-3 p-3 {% if log.severity == 'critical' %}bg-red-50{% elif log.severity == 'warning' %}bg-yellow-50{% else %}bg-blue-50{% endif %} rounded-lg">
+                <div class="flex-shrink-0">
+                    <div class="w-2 h-2 {% if log.severity == 'critical' %}bg-red-400{% elif log.severity == 'warning' %}bg-yellow-400{% else %}bg-blue-400{% endif %} rounded-full mt-3"></div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">{{ log.log_type|title }}</p>
+                    <p class="text-xs text-gray-600">{{ log.description }} • {{ log.timestamp|date:"M d, Y H:i" }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-gray-500">No recent logs.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

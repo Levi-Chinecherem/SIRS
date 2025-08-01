@@ -1,0 +1,216 @@
+{% extends 'base_main.html' %}
+{% load static widget_tweaks %}
+
+{% block content %}
+<!-- UPLOAD PAGE -->
+    <div id="upload-page" class="hidden-page">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">Upload Documents</h1>
+            <p class="text-xl text-gray-400">Securely upload and encrypt your documents with advanced protection</p>
+        </div>
+
+        <!-- Upload Interface -->
+        <div class="metallic-card rounded-xl p-8 mb-8">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                {% if form.errors %}
+                    <div class="text-red-500 text-sm mb-4">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                {{ field.label }}: {{ error }}<br>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-16 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer" onclick="document.getElementById('id_file').click()">
+                    <div class="space-y-4">
+                        <div class="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="upload-cloud" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Drop files here or click to browse</h3>
+                            <p class="text-gray-600">{{ form.file.help_text }}</p>
+                        </div>
+                        <div class="flex justify-center space-x-4 text-sm text-gray-500">
+                            <span class="flex items-center">
+                                <i data-lucide="shield-check" class="h-4 w-4 mr-1"></i>
+                                AES-256 Encrypted
+                            </span>
+                            <span class="flex items-center">
+                                <i data-lucide="zap" class="h-4 w-4 mr-1"></i>
+                                Auto-Indexed
+                            </span>
+                            <span class="flex items-center">
+                                <i data-lucide="eye-off" class="h-4 w-4 mr-1"></i>
+                                Privacy Protected
+                            </span>
+                        </div>
+                    </div>
+                    {% render_field form.file class="hidden" id="id_file" %}
+                </div>
+
+                <!-- Document Details Form -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Document Title *</label>
+                        {% render_field form.title class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter descriptive title" %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                        {% render_field form.category class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Access Level *</label>
+                        {% render_field form.access_level class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                        {% render_field form.department class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                        {% render_field form.tags class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter tags separated by commas" %}
+                        <p class="text-xs text-gray-500 mt-1">{{ form.tags.help_text }}</p>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        {% render_field form.description class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Provide a detailed description of the document content" %}
+                    </div>
+                </div>
+
+                <!-- Encryption & Security Settings -->
+                <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="shield-check" class="h-5 w-5 mr-2 text-blue-600"></i>
+                        Security & Encryption Settings
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="auto-encrypt" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked disabled>
+                                <label for="auto-encrypt" class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">AES-256 Encryption</span>
+                                    <p class="text-gray-500">Automatic military-grade encryption</p>
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                {% render_field form.semantic_indexing class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %}
+                                <label for="id_semantic_indexing" class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">{{ form.semantic_indexing.label }}</span>
+                                    <p class="text-gray-500">Enable AI-powered search capabilities</p>
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                {% render_field form.auto_keyword_extraction class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %}
+                                <label for="id_auto_keyword_extraction" class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">{{ form.auto_keyword_extraction.label }}</span>
+                                    <p class="text-gray-500">Automatic tag generation from content</p>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="virus-scan" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked disabled>
+                                <label for="virus-scan" class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Virus Scanning</span>
+                                    <p class="text-gray-500">Real-time malware detection</p>
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                {% render_field form.watermarked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %}
+                                <label for="id_watermarked" class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">{{ form.watermarked.label }}</span>
+                                    <p class="text-gray-500">Add invisible ownership tracking</p>
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="audit-trail" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked disabled>
+                                <label for="audit-trail" class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Audit Trail</span>
+                                    <p class="text-gray-500">Track all access and modifications</p>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 flex justify-end space-x-4">
+                    <a href="{% url 'my_documents' %}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="x" class="h-4 w-4 mr-2 inline"></i>Cancel
+                    </a>
+                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                        <i data-lucide="upload" class="h-4 w-4 mr-2 inline"></i>Upload & Encrypt
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Upload Progress & History -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Upload Progress -->
+            <div class="metallic-card rounded-xl p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <i data-lucide="progress" class="h-5 w-5 mr-2 text-blue-600"></i>
+                    Upload Progress
+                </h3>
+                <div class="space-y-4">
+                    {% for document in recent_uploads %}
+                        <div class="flex items-center justify-between p-4 {% if document.status == 'completed' %}bg-green-50 border-green-200{% elif document.status == 'processing' %}bg-blue-50 border-blue-200{% elif document.status == 'queued' %}bg-yellow-50 border-yellow-200{% else %}bg-red-50 border-red-200{% endif %} rounded-lg border">
+                            <div class="flex items-center">
+                                <i data-lucide="{% if document.category == 'report' %}file-text{% elif document.category == 'contract' %}file-signature{% elif document.category == 'invoice' %}file-spreadsheet{% else %}file{% endif %}" class="h-6 w-6 {% if document.status == 'completed' %}text-green-600{% elif document.status == 'processing' %}text-blue-600{% elif document.status == 'queued' %}text-yellow-600{% else %}text-red-600{% endif %} mr-3"></i>
+                                <div>
+                                    <span class="font-medium {% if document.status == 'completed' %}text-green-900{% elif document.status == 'processing' %}text-blue-900{% elif document.status == 'queued' %}text-yellow-900{% else %}text-red-900{% endif %}">{{ document.title }}</span>
+                                    <p class="text-sm {% if document.status == 'completed' %}text-green-700{% elif document.status == 'processing' %}text-blue-700{% elif document.status == 'queued' %}text-yellow-700{% else %}text-red-700{% endif %}">{{ document.size|filesizeformat }} • {{ document.get_status_display }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <i data-lucide="{% if document.status == 'completed' %}check-circle{% elif document.status == 'processing' %}loader{% elif document.status == 'queued' %}clock{% else %}alert-circle{% endif %}" class="h-6 w-6 {% if document.status == 'completed' %}text-green-600{% elif document.status == 'processing' %}text-blue-600{% elif document.status == 'queued' %}text-yellow-600{% else %}text-red-600{% endif %}"></i>
+                                {% if document.status == 'processing' %}
+                                    <div class="metallic-progress w-24 h-2 ml-2">
+                                        <div class="metallic-progress-bar" style="width: 75%"></div>
+                                    </div>
+                                    <span class="text-sm text-blue-700 ml-2">75%</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-gray-500">No recent uploads.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Uploads -->
+            <div class="metallic-card rounded-xl p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <i data-lucide="history" class="h-5 w-5 mr-2 text-purple-600"></i>
+                    Recent Uploads
+                </h3>
+                <div class="space-y-3">
+                    {% for document in recent_uploads %}
+                        {% if document.status == 'completed' %}
+                            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                <div class="flex items-center">
+                                    <i data-lucide="{% if document.category == 'report' %}file-text{% elif document.category == 'contract' %}file-signature{% elif document.category == 'invoice' %}file-spreadsheet{% else %}file{% endif %}" class="h-5 w-5 {% if document.category == 'report' %}text-red-500{% elif document.category == 'contract' %}text-blue-500{% elif document.category == 'invoice' %}text-green-500{% else %}text-gray-500{% endif %} mr-3"></i>
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-900">{{ document.title }}</span>
+                                        <p class="text-xs text-gray-500">{{ document.upload_date|timesince }} ago</p>
+                                    </div>
+                                </div>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Success</span>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="text-gray-500">No completed uploads.</div>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'my_documents' %}" class="w-full mt-4 px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                    View All Uploads
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<!-- CHAT PAGE -->
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-white mb-2">AI Chat Search</h1>
+    <p class="text-xl text-gray-400">Use natural language to search and interact with your documents</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Chat Interface -->
+    <div class="lg:col-span-3">
+        <div class="metallic-card rounded-xl h-[calc(100vh-12rem)] flex flex-col">
+            <!-- Chat Header -->
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <i data-lucide="bot" class="h-5 w-5 text-white"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-bold text-gray-900">SIRS AI Assistant</h3>
+                            <p class="text-sm text-gray-500">Powered by advanced NLP and semantic search</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i data-lucide="circle" class="h-2 w-2 mr-1"></i>Online
+                        </span>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i data-lucide="settings" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="flex-1 p-6 overflow-y-auto space-y-4" id="chat-messages">
+                <!-- Welcome Message -->
+                <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <i data-lucide="bot" class="h-4 w-4 text-white"></i>
+                    </div>
+                    <div class="bg-gray-100 rounded-xl p-4 max-w-3xl">
+                        <p class="text-gray-800">Hello! I'm your secure AI assistant. How can I help you find documents today? You can ask things like:</p>
+                        <ul class="mt-2 space-y-1 text-sm text-gray-700">
+                            <li>• "Show me reports about renewable energy from 2023"</li>
+                            <li>• "Find documents related to climate policy changes"</li>
+                            <li>• "Search for financial analysis of solar energy investments"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Dynamic Messages -->
+                {% for message in messages %}
+                    {% if message.is_user %}
+                        <div class="flex items-start space-x-3 justify-end">
+                            <div class="bg-blue-100 rounded-xl p-4 max-w-3xl">
+                                <p class="text-gray-800">{{ message.content }}</p>
+                            </div>
+                            <div class="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                <i data-lucide="user" class="h-4 w-4 text-gray-600"></i>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <i data-lucide="bot" class="h-4 w-4 text-white"></i>
+                            </div>
+                            <div class="bg-gray-100 rounded-xl p-4 max-w-3xl">
+                                <p class="text-gray-800">{{ message.content }}</p>
+                                {% if message.documents.exists %}
+                                    <div class="mt-3 space-y-3">
+                                        {% for doc in message.documents.all %}
+                                            <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                                <div class="flex items-start">
+                                                    <i data-lucide="{% if doc.category == 'report' %}file-text{% elif doc.category == 'contract' %}file-signature{% elif doc.category == 'invoice' %}file-spreadsheet{% elif doc.file.name|lower|slice:'-4:' == '.csv' %}file-csv{% else %}file{% endif %}" class="h-5 w-5 {% if doc.category == 'report' %}text-red-500{% elif doc.category == 'contract' %}text-blue-500{% elif doc.category == 'invoice' %}text-green-500{% elif doc.file.name|lower|slice:'-4:' == '.csv' %}text-purple-500{% else %}text-gray-500{% endif %} mr-2 flex-shrink-0"></i>
+                                                    <div>
+                                                        <h4 class="font-medium text-gray-900">{{ doc.title }}</h4>
+                                                        <p class="text-xs text-gray-500">{{ doc.owner.get_full_name|default:doc.owner.username }} • {{ doc.size|filesizeformat }} • {{ doc.file.name|slice:'-4:'|upper }}</p>
+                                                        <a href="{% url 'view_document' doc.id %}" class="mt-2 inline-block px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                            <i data-lucide="eye" class="h-4 w-4 mr-1 inline"></i>View
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        <div class="mt-4 flex space-x-2">
+                                            <a href="{% url 'search_documents' %}?query={{ message.content|urlencode }}" class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                <i data-lucide="eye" class="h-4 w-4 mr-1 inline"></i>View Documents
+                                            </a>
+                                            <button onclick="document.getElementById('chat-input').value = '{{ message.content|escapejs }}'; document.getElementById('chat-input').focus();" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                                <i data-lucide="refresh-cw" class="h-4 w-4 mr-1 inline"></i>Refine Search
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Chat Input -->
+            <form method="post" action="{% url 'send_message' %}" class="border-t border-gray-200 p-4">
+                {% csrf_token %}
+                <div class="relative">
+                    <textarea id="chat-input" name="message" rows="2" placeholder="Type your question here..." class="w-full pl-12 pr-24 py-4 metallic-input rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+                    <i data-lucide="message-circle" class="absolute left-4 top-4 h-5 w-5 text-gray-400"></i>
+                    <div class="absolute right-4 bottom-4 flex space-x-2">
+                        <button type="button" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                            <i data-lucide="paperclip" class="h-5 w-5"></i>
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                            <i data-lucide="send" class="h-4 w-4 mr-1"></i>Send
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-2 text-xs text-gray-500 flex items-center">
+                    <i data-lucide="lock" class="h-3 w-3 mr-1"></i>
+                    Your queries are end-to-end encrypted and never stored
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chat Sidebar -->
+    <div class="lg:col-span-1">
+        <div class="metallic-card rounded-xl p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i data-lucide="zap" class="h-5 w-5 mr-2 text-blue-600"></i>
+                Chat Features
+            </h3>
+            <div class="space-y-4">
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 class="font-medium text-blue-900 mb-2">Semantic Search</h4>
+                    <p class="text-sm text-blue-700">Understands meaning beyond keywords</p>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <h4 class="font-medium text-green-900 mb-2">Document Summarization</h4>
+                    <p class="text-sm text-green-700">Get quick summaries of long documents</p>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <h4 class="font-medium text-purple-900 mb-2">Query Refinement</h4>
+                    <p class="text-sm text-purple-700">Ask follow-up questions to narrow results</p>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <i data-lucide="history" class="h-5 w-5 mr-2 text-purple-600"></i>
+                    Recent Chats
+                </h3>
+                <div class="space-y-3">
+                    {% for message in recent_chats %}
+                        <div class="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" onclick="document.getElementById('chat-input').value = '{{ message.content|escapejs }}'; document.getElementById('chat-input').focus();">
+                            <p class="text-sm font-medium text-gray-900">{{ message.content }}</p>
+                            <p class="text-xs text-gray-500">{{ message.timestamp|date:"M d, Y, g:i A" }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <h4 class="font-medium text-yellow-900 mb-2 flex items-center">
+                    <i data-lucide="lightbulb" class="h-4 w-4 mr-2"></i>
+                    Pro Tip
+                </h4>
+                <p class="text-sm text-yellow-700">Use specific timeframes or document types in your queries for more precise results</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

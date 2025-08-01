@@ -1,0 +1,82 @@
+{% extends 'base_auth.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- REGISTER PAGE -->
+<div id="register-page" class="active-page min-h-screen flex items-center justify-center metallic-gradient">
+    <div class="max-w-md w-full space-y-8 glass-effect p-8 rounded-2xl shadow-2xl">
+        <div class="text-center">
+            <div class="flex justify-center mb-6">
+                <div class="p-4 bg-white bg-opacity-20 rounded-full">
+                    <i data-lucide="user-plus" class="h-12 w-12 text-white"></i>
+                </div>
+            </div>
+            <h2 class="text-3xl font-extrabold text-white">Create Account</h2>
+            <p class="mt-2 text-blue-100">Join SIRS for secure document management</p>
+        </div>
+        <form method="post" class="mt-8 space-y-6">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <!-- Username field -->
+                <div>
+                    {{ form.username.label_tag }}
+                    {% render_field form.username class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+                <!-- Email field -->
+                <div>
+                    {{ form.email.label_tag }}
+                    {% render_field form.email class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+                <!-- First name field -->
+                <div>
+                    {{ form.first_name.label_tag }}
+                    {% render_field form.first_name class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+                <!-- Last name field -->
+                <div>
+                    {{ form.last_name.label_tag }}
+                    {% render_field form.last_name class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+                <!-- Role field -->
+                <div>
+                    {{ form.role.label_tag }}
+                    {% render_field form.role class="appearance-none relative block w-full px-4 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+                <!-- Department field -->
+                <div>
+                    {{ form.department.label_tag }}
+                    {% render_field form.department class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+                <!-- Password field -->
+                <div>
+                    {{ form.password1.label_tag }}
+                    {% render_field form.password1 class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+                <!-- Confirm Password field -->
+                <div>
+                    {{ form.password2.label_tag }}
+                    {% render_field form.password2 class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white bg-opacity-90" %}
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <input id="terms" name="terms" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label for="terms" class="ml-2 block text-sm text-blue-100">I agree to the Terms of Service and Privacy Policy</label>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                    <i data-lucide="user-check" class="h-4 w-4 mr-2"></i>
+                    Create Account
+                </button>
+            </div>
+
+            <div class="text-center">
+                <span class="text-blue-100">Already have an account? </span>
+                <a href="{% url 'login' %}" class="font-medium text-blue-200 hover:text-blue-100">Sign in here</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<!-- DASHBOARD PAGE -->
+<div id="dashboard-page" class="active-page">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-white mb-2">Dashboard</h1>
+        <p class="text-xl text-gray-400">Welcome to your secure information retrieval system</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="metallic-card rounded-xl p-6 card-hover">
+            <div class="flex items-center">
+                <div class="stat-icon p-3 rounded-lg">
+                    <i data-lucide="file-text" class="h-8 w-8 text-blue-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Documents</p>
+                    <p class="text-3xl font-bold text-gray-900">1,892</p>
+                    <p class="text-xs text-green-600">↑ 12% from last month</p>
+                </div>
+            </div>
+        </div>
+        <div class="metallic-card rounded-xl p-6 card-hover">
+            <div class="flex items-center">
+                <div class="stat-icon p-3 rounded-lg">
+                    <i data-lucide="search" class="h-8 w-8 text-green-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Searches Today</p>
+                    <p class="text-3xl font-bold text-gray-900">247</p>
+                    <p class="text-xs text-green-600">↑ 8% from yesterday</p>
+                </div>
+            </div>
+        </div>
+        <div class="metallic-card rounded-xl p-6 card-hover">
+            <div class="flex items-center">
+                <div class="stat-icon p-3 rounded-lg">
+                    <i data-lucide="key" class="h-8 w-8 text-yellow-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Access Requests</p>
+                    <p class="text-3xl font-bold text-gray-900">15</p>
+                    <p class="text-xs text-red-600">↓ 3% from last week</p>
+                </div>
+            </div>
+        </div>
+        <div class="metallic-card rounded-xl p-6 card-hover">
+            <div class="flex items-center">
+                <div class="stat-icon p-3 rounded-lg">
+                    <i data-lucide="shield-check" class="h-8 w-8 text-purple-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Security Score</p>
+                    <p class="text-3xl font-bold text-gray-900">98.5%</p>
+                    <p class="text-xs text-green-600">Excellent</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity & Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Quick Actions -->
+        <div class="metallic-card rounded-xl p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <i data-lucide="zap" class="h-5 w-5 mr-2 text-blue-600"></i>
+                Quick Actions
+            </h3>
+            <div class="grid grid-cols-1 gap-4">
+                <button onclick="showPage('search')" class="metallic-button flex items-center justify-between p-4 rounded-lg text-left transition-all duration-200">
+                    <div class="flex items-center">
+                        <i data-lucide="search" class="h-6 w-6 text-blue-600 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Search Documents</span>
+                            <p class="text-sm text-gray-600">Find information quickly</p>
+                        </div>
+                    </div>
+                    <i data-lucide="arrow-right" class="h-5 w-5 text-gray-400"></i>
+                </button>
+                <button onclick="showPage('upload')" class="metallic-button flex items-center justify-between p-4 rounded-lg text-left transition-all duration-200">
+                    <div class="flex items-center">
+                        <i data-lucide="upload" class="h-6 w-6 text-green-600 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Upload Document</span>
+                            <p class="text-sm text-gray-600">Add new secure files</p>
+                        </div>
+                    </div>
+                    <i data-lucide="arrow-right" class="h-5 w-5 text-gray-400"></i>
+                </button>
+                <button onclick="showPage('chat')" class="metallic-button flex items-center justify-between p-4 rounded-lg text-left transition-all duration-200">
+                    <div class="flex items-center">
+                        <i data-lucide="message-circle" class="h-6 w-6 text-purple-600 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">AI Chat Search</span>
+                            <p class="text-sm text-gray-600">Natural language queries</p>
+                        </div>
+                    </div>
+                    <i data-lucide="arrow-right" class="h-5 w-5 text-gray-400"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="metallic-card rounded-xl p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <i data-lucide="activity" class="h-5 w-5 mr-2 text-green-600"></i>
+                Recent Activity
+            </h3>
+            <div class="space-y-4">
+                <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                    <div class="flex-shrink-0">
+                        <div class="w-2 h-2 bg-green-400 rounded-full mt-3"></div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Document uploaded successfully</p>
+                        <p class="text-xs text-gray-600">"Q4 Financial Report.pdf" • 2 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                    <div class="flex-shrink-0">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full mt-3"></div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Search performed</p>
+                        <p class="text-xs text-gray-600">Query: "renewable energy reports" • 4 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg">
+                    <div class="flex-shrink-0">
+                        <div class="w-2 h-2 bg-yellow-400 rounded-full mt-3"></div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Access granted</p>
+                        <p class="text-xs text-gray-600">"Climate Research Data" to sarah@company.com • 6 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
+                    <div class="flex-shrink-0">
+                        <div class="w-2 h-2 bg-purple-400 rounded-full mt-3"></div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Security scan completed</p>
+                        <p class="text-xs text-gray-600">All systems secure • 8 hours ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Health & Performance -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="metallic-card rounded-xl p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i data-lucide="server" class="h-5 w-5 mr-2 text-blue-600"></i>
+                System Performance
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Uptime</span>
+                        <span class="font-semibold text-green-600">99.9%</span>
+                    </div>
+                    <div class="metallic-progress h-2">
+                        <div class="metallic-progress-bar" style="width: 99.9%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Response Time</span>
+                        <span class="font-semibold text-blue-600">142ms</span>
+                    </div>
+                    <div class="metallic-progress h-2">
+                        <div class="metallic-progress-bar" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Search Accuracy</span>
+                        <span class="font-semibold text-purple-600">97.3%</span>
+                    </div>
+                    <div class="metallic-progress h-2">
+                        <div class="metallic-progress-bar" style="width: 97.3%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metallic-card rounded-xl p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i data-lucide="database" class="h-5 w-5 mr-2 text-green-600"></i>
+                Storage Analytics
+            </h3>
+            <div class="space-y-4">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-gray-900">2.4 TB</div>
+                    <div class="text-sm text-gray-600">Total Storage Used</div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">PDF Documents</span>
+                        <span class="text-sm font-semibold">1.2 TB</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Office Files</span>
+                        <span class="text-sm font-semibold">0.8 TB</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Other</span>
+                        <span class="text-sm font-semibold">0.4 TB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metallic-card rounded-xl p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i data-lucide="shield-alert" class="h-5 w-5 mr-2 text-red-600"></i>
+                Security Alerts
+            </h3>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i data-lucide="alert-triangle" class="h-4 w-4 text-red-600 mr-2"></i>
+                        <span class="text-sm font-medium text-red-900">Failed Login</span>
+                    </div>
+                    <span class="text-xs text-red-600">2 min ago</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i data-lucide="clock" class="h-4 w-4 text-yellow-600 mr-2"></i>
+                        <span class="text-sm font-medium text-yellow-900">Unusual Access</span>
+                    </div>
+                    <span class="text-xs text-yellow-600">1 hour ago</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i data-lucide="check-circle" class="h-4 w-4 text-green-600 mr-2"></i>
+                        <span class="text-sm font-medium text-green-900">All Clear</span>
+                    </div>
+                    <span class="text-xs text-green-600">Last scan</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

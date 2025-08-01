@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIRS - Secure Information Retrieval System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide-icons/0.263.1/lucide.min.js"></script>
+    <style>
+        /* Custom metallic color scheme and effects */
+        :root {
+            --metallic-primary: #2d3748;
+            --metallic-secondary: #4a5568;
+            --metallic-accent: #718096;
+            --metallic-light: #cbd5e0;
+            --metallic-dark: #1a202c;
+            --silver-gradient: linear-gradient(135deg, #f7fafc 0%, #edf2f7 25%, #e2e8f0 50%, #cbd5e0 75%, #a0aec0 100%);
+            --gold-gradient: linear-gradient(135deg, #fed7aa 0%, #fdba74 25%, #fb923c 50%, #f97316 75%, #ea580c 100%);
+            --blue-metallic: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 25%, #93c5fd 50%, #60a5fa 75%, #3b82f6 100%);
+            --dark-metallic: linear-gradient(135deg, #1a202c 0%, #2d3748 25%, #4a5568 50%, #718096 75%, #a0aec0 100%);
+        }
+
+        /* Add smooth scrolling */
+        html, body {
+            scroll-behavior: smooth;
+        }
+
+        .metallic-bg {
+            background: var(--dark-metallic);
+        }
+
+        .metallic-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(203, 213, 224, 0.3);
+            box-shadow: 0 8px 32px rgba(45, 55, 72, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .metallic-button {
+            background: linear-gradient(145deg, #f7fafc, #e2e8f0);
+            border: 1px solid #cbd5e0;
+            box-shadow: 3px 3px 6px #a0aec0, -3px -3px 6px #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .metallic-button:hover {
+            box-shadow: inset 2px 2px 4px #a0aec0, inset -2px -2px 4px #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .metallic-input {
+            background: linear-gradient(145deg, #ffffff, #f7fafc);
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 2px 2px 4px #cbd5e0, inset -2px -2px 4px #ffffff;
+        }
+
+        .metallic-nav {
+            background: linear-gradient(90deg, #2d3748 0%, #4a5568 50%, #2d3748 100%);
+            box-shadow: 0 4px 20px rgba(45, 55, 72, 0.4);
+        }
+
+        .sidebar-metallic {
+            background: var(--dark-metallic);
+            border-right: 3px solid #cbd5e0;
+            box-shadow: 4px 0 20px rgba(45, 55, 72, 0.1);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(45, 55, 72, 0.15);
+        }
+
+        .sidebar-active {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.2) 100%);
+            border-right: 4px solid #3b82f6;
+            box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.1);
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from {
+                box-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+            }
+        }
+
+        .metallic-progress {
+            background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e0 50%, #a0aec0 100%);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .metallic-progress-bar {
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .stat-icon {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            box-shadow: 3px 3px 6px #cbd5e0, -3px -3px 6px #ffffff;
+        }
+    </style>
+</head>
+<body class="metallic-bg min-h-screen">
+    <!-- Navigation Header -->
+    <nav class="metallic-nav shadow-lg fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i data-lucide="shield-check" class="h-8 w-8 text-blue-400"></i>
+                        <span class="ml-2 text-2xl font-bold text-white tracking-wide">SIRS</span>
+                        <span class="ml-2 text-sm text-gray-300">v1.0</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="p-2 text-gray-300 hover:text-white transition-colors">
+                            <i data-lucide="bell" class="h-5 w-5"></i>
+                            <span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+                        </button>
+                    </div>
+
+                    <!-- User Profile -->
+                    <div class="relative">
+                        <button class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="toggleDropdown()">
+                            <div id="user-avatar" class="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold uppercase">
+                                {{ user.avatar_initials|default:user.username|slice:":2" }}
+                            </div>
+                            <span class="ml-2 text-white font-medium">{{ user.get_full_name|default:user.username }}</span>
+                            <i data-lucide="chevron-down" class="ml-1 h-4 w-4 text-gray-300"></i>
+                        </button>
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 metallic-card rounded-lg shadow-xl py-1 z-50">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg mx-1">
+                                <i data-lucide="user" class="inline h-4 w-4 mr-2"></i>Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg mx-1">
+                                <i data-lucide="settings" class="inline h-4 w-4 mr-2"></i>Settings
+                            </a>
+                            <hr class="my-1">
+                            <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-1">
+                                <i data-lucide="log-out" class="inline h-4 w-4 mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="flex pt-16 min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 sidebar-metallic shadow-2xl fixed top-16 bottom-0 left-0 overflow-y-auto z-40" id="sidebar">
+            <div class="p-6">
+                <!-- User Role Badge -->
+                <div class="mb-6 p-3 metallic-card rounded-lg text-center">
+                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <i data-lucide="crown" class="h-3 w-3 mr-1"></i>
+                        {{ user.role|title }}
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <a href="{% url 'dashboard' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200 {% if request.resolver_match.url_name == 'dashboard' %}sidebar-active{% endif %}">
+                        <i data-lucide="home" class="mr-3 h-5 w-5"></i>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+                    <a href="{% url 'my_documents' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200 {% if request.resolver_match.url_name == 'my_documents' %}sidebar-active{% endif %}">
+                        <i data-lucide="file-text" class="mr-3 h-5 w-5"></i>
+                        <span class="font-medium">My Documents</span>
+                    </a>
+                    <a href="{% url 'upload_document' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200 {% if request.resolver_match.url_name == 'upload_document' %}sidebar-active{% endif %}">
+                        <i data-lucide="upload" class="mr-3 h-5 w-5"></i>
+                        <span class="font-medium">Upload Documents</span>
+                    </a>
+                    <a href="{% url 'search_documents' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                        <i data-lucide="search" class="mr-3 h-5 w-5"></i>
+                        <span class="font-medium">Search Documents</span>
+                    </a>
+                    <a href="{% url 'chat_interface' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                        <i data-lucide="message-circle" class="mr-3 h-5 w-5"></i>
+                        <span class="font-medium">AI Chat Search</span>
+                    </a>
+                    <a href="{% url 'manage_requests' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                        <i data-lucide="key" class="mr-3 h-5 w-5"></i>
+                        <span class="font-medium">Access Requests</span>
+                    </a>
+
+                    <!-- Admin Only Section -->
+                    {% if user.role == 'admin' %}
+                    <div class="pt-4 mt-4 border-t border-gray-300" id="admin-section">
+                        <p class="px-4 py-2 text-xs text-gray-400 uppercase tracking-wide font-semibold">Administration</p>
+                        <a href="{% url 'admin_dashboard' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                            <i data-lucide="bar-chart" class="mr-3 h-5 w-5"></i>
+                            <span class="font-medium">Analytics</span>
+                        </a>
+                        <a href="{% url 'user_management' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                            <i data-lucide="users" class="mr-3 h-5 w-5"></i>
+                            <span class="font-medium">User Management</span>
+                        </a>
+                        <a href="{% url 'system_logs' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                            <i data-lucide="activity" class="mr-3 h-5 w-5"></i>
+                            <span class="font-medium">System Logs</span>
+                        </a>
+                        <a href="{% url 'security_center' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                            <i data-lucide="shield" class="mr-3 h-5 w-5"></i>
+                            <span class="font-medium">Security Center</span>
+                        </a>
+                        <a href="{% url 'encryption_keys' %}" class="sidebar-btn w-full flex items-center px-4 py-3 text-left text-gray-200 rounded-lg hover:bg-blue-50 hover:text-gray-900 transition-all duration-200">
+                            <i data-lucide="lock" class="mr-3 h-5 w-5"></i>
+                            <span class="font-medium">Encryption Keys</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 ml-64 p-8 overflow-y-auto h-[calc(100vh-4rem)]">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Toggle dropdown visibility
+        function toggleDropdown() {
+            document.getElementById('user-dropdown').classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('user-dropdown');
+            const profileButton = document.querySelector('button[onclick="toggleDropdown()"]');
+            if (!profileButton.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
+
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

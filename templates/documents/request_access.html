@@ -1,0 +1,52 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="">
+    <h1 class="text-3xl text-white font-bold mb-4">Request Access</h1>
+    <p class="text-gray-400 mb-6">Request access to restricted or private documents</p>
+    
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="p-4 {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %} rounded">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Request Access to "{{ document.title }}"</h2>
+        <p class="text-sm text-gray-600 mb-4">
+            <i data-lucide="{% if document.category == 'report' %}file-text{% elif document.category == 'financial' %}file-spreadsheet{% elif document.category == 'policy' %}file-text{% elif document.category == 'manual' %}file-text{% elif document.category == 'legal' %}file-signature{% elif document.category == 'marketing' %}file-image{% elif document.category == 'training' %}file-video{% elif document.category == 'other' %}file{% endif %}" class="h-5 w-5 {% if document.category == 'report' %}text-blue-500{% elif document.category == 'financial' %}text-green-500{% elif document.category == 'policy' %}text-blue-500{% elif document.category == 'manual' %}text-blue-500{% elif document.category == 'legal' %}text-blue-500{% elif document.category == 'marketing' %}text-pink-500{% elif document.category == 'training' %}text-purple-500{% else %}text-gray-500{% endif %} mr-2 inline"></i>
+            {{ document.owner.username }} • {{ document.size|filesizeformat }} • {{ document.file.name|slice:'-4:'|upper }}
+        </p>
+        <form method="post" action="{% url 'request_access' document.id %}">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="{{ form.reason.id_for_label }}" class="block text-sm font-medium text-gray-700">Reason for Request</label>
+                {{ form.reason }}
+                {% if form.reason.errors %}
+                    <p class="text-sm text-red-600">{{ form.reason.errors }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.priority.id_for_label }}" class="block text-sm font-medium text-gray-700">Priority</label>
+                {{ form.priority }}
+                {% if form.priority.errors %}
+                    <p class="text-sm text-red-600">{{ form.priority.errors }}</p>
+                {% endif %}
+            </div>
+            <div class="flex space-x-2">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    <i data-lucide="send" class="h-4 w-4 mr-2 inline"></i>Submit Request
+                </button>
+                <a href="{% url 'my_documents' %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                    <i data-lucide="x" class="h-4 w-4 mr-2 inline"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

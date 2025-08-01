@@ -1,0 +1,201 @@
+{% extends 'base_main.html' %}
+{% load static widget_tweaks %}
+
+{% block content %}
+<!-- SEARCH PAGE -->
+    <div id="search-page" class="hidden-page">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">Search Documents</h1>
+            <p class="text-xl text-gray-400">Found {{ documents.paginator.count }} document{{ documents.paginator.count|pluralize }} using secure, privacy-preserving search</p>
+        </div>
+
+        <!-- Advanced Search Interface -->
+        <div class="metallic-card rounded-xl p-8 mb-8">
+            <form method="get" action="{% url 'search_documents' %}" class="space-y-6">
+                <!-- Main Search Bar -->
+                <div class="relative">
+                    {% render_field form.query class="w-full pl-14 pr-16 py-4 metallic-input rounded-xl text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" placeholder="Enter your search query..." %}
+                    <i data-lucide="search" class="absolute left-5 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400"></i>
+                    <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
+                        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                    </button>
+                </div>
+
+                <!-- Search Filters -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Search Type</label>
+                        {% render_field form.search_type class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        {% render_field form.category class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                        <div class="flex space-x-2">
+                            {% render_field form.date_from class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Access Level</label>
+                        {% render_field form.access_level class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-gray-900 mb-3">Advanced Options</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="include-tags" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" name="tags" {% if form.tags.value %}checked{% endif %}>
+                            <label for="include-tags" class="ml-2 text-sm text-gray-700">Include tags search</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="fuzzy-matching" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
+                            <label for="fuzzy-matching" class="ml-2 text-sm text-gray-700">Enable fuzzy matching</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="encrypted-search" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
+                            <label for="encrypted-search" class="ml-2 text-sm text-gray-700">Encrypted search mode</label>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                        {% render_field form.tags class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter tags..." %}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search Results -->
+        <div id="search-results" class="space-y-6">
+            <!-- Results Header -->
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-900">Search Results ({{ documents.paginator.count }})</h3>
+                <div class="flex space-x-2">
+                    <button class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                        <i data-lucide="list" class="h-4 w-4 mr-1 inline"></i>List
+                    </button>
+                    <button class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                        <i data-lucide="grid" class="h-4 w-4 mr-1 inline"></i>Grid
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Results -->
+            {% for document in documents %}
+                <div class="metallic-card rounded-xl p-6 border-l-4 {% if document.access_level == 'public' %}border-green-500{% elif document.access_level == 'restricted' %}border-yellow-500{% else %}border-red-500{% endif %} card-hover">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <i data-lucide="{% if document.category == 'report' %}file-text{% elif document.category == 'contract' %}file-signature{% elif document.category == 'invoice' %}file-spreadsheet{% elif document.file.name|lower|slice:'-4:' == '.csv' %}file-csv{% else %}file{% endif %}" class="h-5 w-5 {% if document.category == 'report' %}text-red-500{% elif document.category == 'contract' %}text-blue-500{% elif document.category == 'invoice' %}text-green-500{% elif document.file.name|lower|slice:'-4:' == '.csv' %}text-purple-500{% else %}text-gray-500{% endif %} mr-2"></i>
+                                <h3 class="text-xl font-semibold text-gray-900">{{ document.title }}</h3>
+                                <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {% if document.access_level == 'public' %}bg-green-100 text-green-800{% elif document.access_level == 'restricted' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ document.get_access_level_display }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">by {{ document.owner.get_full_name|default:document.owner.username }} • Uploaded {{ document.upload_date|date:"M d, Y" }} • {{ document.get_department_display|default:"Unknown Department" }}</p>
+                            {% if document.description %}
+                                <p class="text-gray-700 mb-4 line-clamp-2">{{ document.description }}</p>
+                            {% endif %}
+
+                            <!-- Document Stats -->
+                            <div class="flex items-center space-x-6 mb-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if document.file.name|lower|slice:'-4:' == '.pdf' %}bg-red-100 text-red-800{% elif document.file.name|lower|slice:'-4:' == '.docx' %}bg-blue-100 text-blue-800{% elif document.file.name|lower|slice:'-4:' == '.csv' %}bg-purple-100 text-purple-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    <i data-lucide="{% if document.file.name|lower|slice:'-4:' == '.pdf' %}file-text{% elif document.file.name|lower|slice:'-4:' == '.docx' %}file-text{% elif document.file.name|lower|slice:'-4:' == '.csv' %}file-csv{% else %}file{% endif %}" class="h-3 w-3 mr-1"></i>
+                                    {{ document.file.name|slice:'-4:'|upper }}
+                                </span>
+                                <span class="text-sm text-gray-500">Relevance: {{ document.relevance_score|default:"N/A" }}%</span>
+                                <span class="text-sm text-gray-500">{{ document.size|filesizeformat }}</span>
+                                <span class="text-sm text-gray-500">{{ document.views }} views</span>
+                            </div>
+
+                            <!-- Tags -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                {% for tag in document.tags.all %}
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="ml-6 flex flex-col space-y-2">
+                            <a href="{% url 'view_document' document.id %}" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                                <i data-lucide="eye" class="h-4 w-4 mr-1 inline"></i>Preview
+                            </a>
+                            <a href="{% url 'download_document' document.id %}" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
+                                <i data-lucide="download" class="h-4 w-4 mr-1 inline"></i>Download
+                            </a>
+                            {% if document.access_level == 'restricted' or document.access_level == 'private' %}
+                                <a href="{% url 'request_access' document.id %}" class="px-4 py-2 bg-yellow-600 text-white text-sm rounded-lg hover:bg-yellow-700 transition-colors">
+                                    <i data-lucide="key" class="h-4 w-4 mr-1 inline"></i>Request Access
+                                </a>
+                            {% endif %}
+                            {% if document.owner == user %}
+                                <form method="post" action="{% url 'delete_document' document.id %}" onsubmit="return confirm('Are you sure you want to delete this document?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
+                                        <i data-lucide="trash-2" class="h-4 w-4 mr-1 inline"></i>Delete
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="metallic-card rounded-xl p-6 text-gray-500">
+                    {% if form.is_valid %}
+                        No documents match your search criteria.
+                    {% else %}
+                        Enter a search query to find documents.
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            {% if documents %}
+                <div class="flex justify-between items-center mt-6">
+                    <div class="text-sm text-gray-500">
+                        Showing {{ documents.start_index }}–{{ documents.end_index }} of {{ documents.paginator.count }} documents
+                    </div>
+                    <div class="flex space-x-2">
+                        {% if documents.has_previous %}
+                            <a href="?page={{ documents.previous_page_number }}&query={{ query|urlencode }}&search_type={{ search_type }}&category={{ form.category.value|default:'' }}&access_level={{ form.access_level.value|default:'' }}&date_from={{ form.date_from.value|default:'' }}&date_to={{ form.date_to.value|default:'' }}&tags={{ form.tags.value|default:'' }}" class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Previous</a>
+                        {% endif %}
+                        {% for num in documents.paginator.page_range %}
+                            <a href="?page={{ num }}&query={{ query|urlencode }}&search_type={{ search_type }}&category={{ form.category.value|default:'' }}&access_level={{ form.access_level.value|default:'' }}&date_from={{ form.date_from.value|default:'' }}&date_to={{ form.date_to.value|default:'' }}&tags={{ form.tags.value|default:'' }}" class="px-4 py-2 text-sm {% if documents.number == num %}bg-blue-600 text-white{% else %}bg-gray-100 hover:bg-gray-200{% endif %} rounded-lg transition-colors">{{ num }}</a>
+                        {% endfor %}
+                        {% if documents.has_next %}
+                            <a href="?page={{ documents.next_page_number }}&query={{ query|urlencode }}&search_type={{ search_type }}&category={{ form.category.value|default:'' }}&access_level={{ form.access_level.value|default:'' }}&date_from={{ form.date_from.value|default:'' }}&date_to={{ form.date_to.value|default:'' }}&tags={{ form.tags.value|default:'' }}" class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Next</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Search Tips -->
+        <div class="metallic-card rounded-xl p-6 mt-8">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i data-lucide="lightbulb" class="h-5 w-5 mr-2 text-yellow-600"></i>
+                Search Tips
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">Query Suggestions:</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Use quotes for exact phrases: "renewable energy"</li>
+                        <li>• Use AND/OR for complex queries</li>
+                        <li>• Try semantic search for concept-based results</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">File Types:</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• PDF documents are fully searchable</li>
+                        <li>• Office files include metadata search</li>
+                        <li>• All content is encrypted and secure</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

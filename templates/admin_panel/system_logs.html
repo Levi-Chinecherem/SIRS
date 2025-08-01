@@ -1,0 +1,110 @@
+{% extends 'base_main.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-white mb-2">System Logs</h1>
+    <p class="text-xl text-gray-400">Audit trail and system activity monitoring</p>
+</div>
+
+<!-- Log Filters -->
+<div class="metallic-card rounded-xl p-6 mb-6">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Log Type</label>
+            {% render_field form.log_type class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Severity</label>
+            {% render_field form.severity class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">User</label>
+            {% render_field form.user class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Date From</label>
+            {% render_field form.date_from class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Date To</label>
+            {% render_field form.date_to class="w-full px-4 py-3 metallic-input rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+        </div>
+        <div class="col-span-1 md:col-span-4 flex justify-end space-x-2">
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors pulse-glow flex items-center">
+                <i data-lucide="filter" class="h-4 w-4 mr-1"></i>Apply Filters
+            </button>
+            <button type="button" class="px-4 py-2 metallic-button text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center">
+                <i data-lucide="download" class="h-4 w-4 mr-1"></i>Export Logs
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Log Table -->
+<div class="metallic-card rounded-xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-bold text-gray-900">System Logs ({{ page_obj.paginator.count }})</h3>
+        <div class="text-sm text-gray-500">
+            Last updated: Just now
+        </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Type</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for log in page_obj %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.timestamp|date:"M d, Y H:i:s" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {% if log.log_type == 'security' %}bg-red-100 text-red-800{% elif log.log_type == 'user_activity' %}bg-blue-100 text-blue-800{% elif log.log_type == 'document_operation' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {{ log.get_log_type_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ log.user.username|default:"System" }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ log.description }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {% if log.severity == 'critical' %}bg-red-100 text-red-800{% elif log.severity == 'warning' %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
+                                {{ log.get_severity_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.ip_address|default:"N/A" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No logs found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Pagination -->
+    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div class="text-sm text-gray-500">
+            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} logs
+        </div>
+        <div class="flex space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 text-sm metallic-button hover:bg-gray-200 rounded-lg transition-colors">Previous</a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                <a href="?page={{ num }}" class="px-3 py-1 text-sm {% if page_obj.number == num %}bg-blue-600 text-white{% else %}metallic-button hover:bg-gray-200{% endif %} rounded-lg transition-colors">{{ num }}</a>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 text-sm metallic-button hover:bg-gray-200 rounded-lg transition-colors">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
