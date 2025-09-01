@@ -1,0 +1,35 @@
+# Core
+Django
+django-environ
+django-filter
+django-taggit
+
+# Database
+psycopg2-binary
+
+# Static files / serving
+whitenoise
+gunicorn
+
+# Media & file handling
+Pillow
+
+# Security & encryption
+cryptography
+
+# AI / NLP chat
+transformers
+torch
+accelerate
+safetensors
+huggingface-hub
+
+# Search (optional: enable if you use Elasticsearch)
+elasticsearch
+django-elasticsearch-dsl
+
+# Testing & QA (optional)
+pytest
+pytest-django
+coverage
+bandit
