@@ -33,3 +33,4 @@ pytest
 pytest-django
 coverage
 bandit
+django-widget-tweaks

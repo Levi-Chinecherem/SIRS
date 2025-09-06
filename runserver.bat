@@ -18,7 +18,7 @@ REM === 2. Install requirements ===
 echo Installing requirements...
 "%PIP%" install --upgrade pip >nul
 if exist requirements.txt (
-    "%PIP%" install -r requirements.txt
+    "%PIP%" install -r requirements.txt --timeout 6000
 )
 
 REM === 3. Start Django server in background ===
@@ -28,7 +28,7 @@ start "" /b "%PYTHON%" manage.py runserver
 REM === 4. Wait until server is up ===
 :waitloop
 ping 127.0.0.1 -n 2 >nul
-curl -s http://127.0.0.1:8000 >nul 2>&1
+curl -s http://127.0.0.1:8000/dashboard >nul 2>&1
 if errorlevel 1 (
     goto waitloop
 )
